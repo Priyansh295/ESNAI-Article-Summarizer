@@ -4,7 +4,7 @@ AI Summary for Articles is an intelligent Chrome extension that leverages Google
 
 ## 📋 Project Overview
 
-**Project Name**: Blog Post Summarizer - Chrome Extension
+**Project Name**: Articles/Post Summarizer(ESNAI) - Chrome Extension
 
 **Mission**: Transform lengthy web articles into concise, digestible summaries with a single click.
 
