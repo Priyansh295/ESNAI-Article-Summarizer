@@ -1,4 +1,4 @@
-# Blog Post Summarizer – Chrome Extension
+# Articles/Post Summarizer – Chrome Extension
 
 AI Summary for Articles is an intelligent Chrome extension that leverages Google's Gemini AI to generate concise summaries of web articles. It helps users quickly digest information by providing brief summaries, detailed explanations, or bullet points of any article they're reading online.
 
