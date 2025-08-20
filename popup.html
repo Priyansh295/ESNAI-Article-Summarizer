@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>AI Summary</title>
+    <style>
+      :root {
+        --bg-color: #ffffff;
+        --text-color: #1f2937;
+        --text-secondary: #6b7280;
+        --border-color: #e5e7eb;
+        --primary-color: #3b82f6;
+        --primary-hover: #2563eb;
+        --secondary-color: #10b981;
+        --secondary-hover: #059669;
+        --surface-color: #f9fafb;
+        --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+      
+      body.dark-mode {
+        --bg-color: #111827;
+        --text-color: #f9fafb;
+        --text-secondary: #9ca3af;
+        --border-color: #374151;
+        --primary-color: #60a5fa;
+        --primary-hover: #3b82f6;
+        --secondary-color: #34d399;
+        --secondary-hover: #10b981;
+        --surface-color: #1f2937;
+        --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+      }
+      
+      * {
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        width: 420px;
+        min-height: 500px;
+        padding: 0;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        transition: all 0.2s ease;
+        margin: 0;
+        line-height: 1.5;
+      }
+
+      .header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        padding: 20px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+        opacity: 0.3;
+      }
+
+      .header-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .header h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .ai-icon {
+        width: 28px;
+        height: 28px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+      }
+
+      .theme-toggle {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        border-radius: 8px;
+        padding: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+      }
+      
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.05);
+      }
+
+      .content {
+        padding: 24px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--text-color);
+      }
+
+      .summary-type-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .btn-type {
+        background-color: var(--surface-color);
+        color: var(--text-color);
+        border: 2px solid var(--border-color);
+        text-align: left;
+        justify-content: flex-start;
+        transition: all 0.2s ease;
+        font-size: 14px;
+        padding: 12px 16px;
+      }
+
+      .btn-type:hover {
+        background-color: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+      }
+
+      .btn-type.active {
+        background-color: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .button-group {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .btn {
+        flex: 1;
+        padding: 12px 16px;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        box-shadow: var(--shadow);
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+      }
+
+      .btn-primary:hover:not(:disabled) {
+        background-color: var(--primary-hover);
+      }
+
+      .btn-secondary {
+        background-color: var(--secondary-color);
+        color: white;
+      }
+
+      .btn-secondary:hover:not(:disabled) {
+        background-color: var(--secondary-hover);
+      }
+
+      .btn-outline {
+        background-color: transparent;
+        color: var(--text-color);
+        border: 2px solid var(--border-color);
+      }
+
+      .btn-outline:hover:not(:disabled) {
+        background-color: var(--surface-color);
+        border-color: var(--primary-color);
+      }
+
+      .export-buttons {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+      }
+
+      .export-buttons .btn {
+        flex: 1;
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+
+      .result-container {
+        background-color: var(--surface-color);
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        min-height: 200px;
+        max-height: 300px;
+        overflow-y: auto;
+        position: relative;
+      }
+
+      #result {
+        padding: 20px;
+        white-space: pre-wrap;
+        line-height: 1.6;
+        font-size: 14px;
+        color: var(--text-color);
+      }
+
+      #result:empty::before {
+        content: 'Select a summary type and click "Summarize This Page" to generate a summary.';
+        color: var(--text-secondary);
+        font-style: italic;
+      }
+
+      .loading {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 200px;
+        gap: 16px;
+      }
+
+      .loader {
+        width: 40px;
+        height: 40px;
+        border: 3px solid var(--border-color);
+        border-top: 3px solid var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      .loading-text {
+        color: var(--text-secondary);
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      /* Custom scrollbar */
+      .result-container::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .result-container::-webkit-scrollbar-track {
+        background: var(--surface-color);
+      }
+
+      .result-container::-webkit-scrollbar-thumb {
+        background: var(--border-color);
+        border-radius: 3px;
+      }
+
+      .result-container::-webkit-scrollbar-thumb:hover {
+        background: var(--text-secondary);
+      }
+
+      /* Success animation */
+      .success-flash {
+        animation: successFlash 0.3s ease;
+      }
+
+      @keyframes successFlash {
+        0% { background-color: var(--secondary-color); }
+        100% { background-color: transparent; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <div class="header-content">
+        <h1>
+          <div class="ai-icon">🤖</div>
+          AI Summary
+        </h1>
+        <button class="theme-toggle" id="theme-toggle" title="Toggle dark mode">
+          <span id="theme-icon">🌙</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="form-group">
+        <label class="form-label">Choose Summary Type</label>
+        <div class="summary-type-buttons">
+          <button class="btn btn-type active" data-type="brief">
+            <span>📝</span>
+            Brief Summary
+          </button>
+          <button class="btn btn-type" data-type="detailed">
+            <span>📋</span>
+            Detailed Summary
+          </button>
+          <button class="btn btn-type" data-type="bullets">
+            <span>📌</span>
+            Bullet Points
+          </button>
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button id="summarize" class="btn btn-primary">
+          <span>✨</span>
+          Summarize This Page
+        </button>
+        <button id="copy-btn" class="btn btn-secondary">
+          <span>📋</span>
+          Copy
+        </button>
+      </div>
+      
+      <div class="export-buttons">
+        <button id="export-txt" class="btn btn-outline">
+          <span>📄</span>
+          Export TXT
+        </button>
+        <button id="export-md" class="btn btn-outline">
+          <span>📝</span>
+          Export MD
+        </button>
+      </div>
+
+      <div class="result-container">
+        <div id="result"></div>
+      </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>
